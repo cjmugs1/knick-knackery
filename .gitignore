@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Compiled output
+out/
+dist/
+
+# VS Code test runner
+.vscode-test/
+
+# Packaged extension files
+*.vsix
+
+# Environment variables (just in case you ever use a .env file locally)
+.env

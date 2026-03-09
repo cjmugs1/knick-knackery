@@ -1,0 +1,127 @@
+{
+  "name": "context-notes",
+  "displayName": "Knick Knackery",
+  "description": "Save AI chat context as Keep-style markdown notes with local or cloud LLM summarization.",
+  "version": "1.0.0",
+  "publisher": "connor-mulligan",
+  "repository": {"type": "git", "url": "https://github.com/cjmugs1/knick-knackery"},
+  "license": "MIT",
+  "icon": "knick-knackery.jpg",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Machine Learning",
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "context-notes.openBoard",
+        "title": "Knick Knackery: Open Board"
+      },
+      {
+        "command": "context-notes.saveSelection",
+        "title": "Knick Knackery: Save Terminal Selection"
+      },
+      {
+        "command": "context-notes.saveLastCommand",
+        "title": "Knick Knackery: Save Last Command"
+      },
+      {
+        "command": "context-notes.setApiKey",
+        "title": "Knick Knackery: Set API Key"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "context-notes.saveSelection",
+        "key": "ctrl+shift+n",
+        "mac": "cmd+shift+n",
+        "when": "terminalFocus"
+      },
+      {
+        "command": "context-notes.saveLastCommand",
+        "key": "ctrl+shift+m",
+        "mac": "cmd+shift+m",
+        "when": "terminalFocus"
+      }
+    ],
+    "menus": {
+      "terminal/context": [
+        {
+          "command": "context-notes.saveSelection",
+          "group": "navigation"
+        },
+        {
+          "command": "context-notes.saveLastCommand",
+          "group": "navigation"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "context-notes.boardView",
+          "name": "Knick Knackery"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Knick Knackery",
+      "properties": {
+        "context-notes.aiEngine": {
+          "type": "string",
+          "enum": [
+            "Local (Ollama)",
+            "Cloud (API Key)"
+          ],
+          "default": "Local (Ollama)",
+          "description": "Choose which AI engine to use for summarization."
+        },
+        "context-notes.ollamaModel": {
+          "type": "string",
+          "default": "llama3.2:1b",
+          "description": "The name of the local Ollama model to use (e.g., llama3.2:1b, llama3, mistral)."
+        },
+        "context-notes.anthropicModel": {
+          "type": "string",
+          "enum": [
+            "claude-3-5-haiku-20241022",
+            "claude-3-7-sonnet-20250219",
+            "claude-3-5-sonnet-20241022"
+          ],
+          "default": "claude-3-5-haiku-20241022",
+          "description": "The Anthropic model to use for cloud summarization."
+        },
+        "context-notes.customPrompt": {
+          "type": "string",
+          "editPresentation": "multilineText",
+          "default": "You are a strict formatting bot. You MUST summarize the provided terminal interaction EXACTLY matching the structure of the TEMPLATE below. Do NOT invent your own headings. Do NOT add pleasantries.\n\n=== TEMPLATE ===\n### [8-Word Actionable Title]\n\n**TL;DR:** [1-2 sentence summary.]\n\n---\n\n#### The Concept / Problem\n[2-3 sentences explaining the goal or issue.]\n\n#### Actionable Code / Commands\n[Code blocks or \"N/A\".]\n\n#### Key Takeaways & Caveats\n* [Bullet point 1]\n* [Bullet point 2]\n\n**Context Tags:** #tag1 #tag2 #tag3\n=== END TEMPLATE ===\n\nSummarize the following interaction EXACTLY matching the template structure.\n\n=== INTERACTION TO SUMMARIZE ===\n{TEXT}\n=== END INTERACTION ===\n\nSTRICT FORMATTED OUTPUT:\n###",
+          "description": "Customize the prompt sent to the AI. Use {TEXT} where the terminal output should be injected."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/marked": "^5.0.2",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "marked": "^17.0.3"
+  }
+}
