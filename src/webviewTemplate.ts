@@ -65,7 +65,7 @@ export function getWebviewHtml(cardsHtml: string): string {
             border-color: var(--vscode-focusBorder);
         }
 
-        .note-card {
+        .knick-knack-card {
             border: 1px solid var(--vscode-panel-border);
             border-radius: 6px;
             padding: 10px;
@@ -74,12 +74,12 @@ export function getWebviewHtml(cardsHtml: string): string {
             position: relative; 
         }
 
-        .note-card.collapsed .markdown-body {
+        .knick-knack-card.collapsed .markdown-body {
             max-height: 65px; 
             overflow: hidden;
         }
 
-        .note-card.collapsed .markdown-body::after {
+        .knick-knack-card.collapsed .markdown-body::after {
             content: "";
             position: absolute;
             bottom: 30px; 
@@ -138,7 +138,7 @@ export function getWebviewHtml(cardsHtml: string): string {
             margin-bottom: 10px;
         }
         
-        .note-card h3 {
+        .knick-knack-card h3 {
             margin: 0;
             color: var(--vscode-textPreformat-foreground);
             font-size: 1.1em;
@@ -219,9 +219,9 @@ export function getWebviewHtml(cardsHtml: string): string {
         </ul>
     </div>
     
-    <input type="text" id="searchInput" placeholder="Search notes..." />
+    <input type="text" id="searchInput" placeholder="Search knick knacks..." />
 
-    <div id="notesContainer">
+    <div id="knickKnacksContainer">
         ${cardsHtml}
     </div>
 
@@ -230,11 +230,11 @@ export function getWebviewHtml(cardsHtml: string): string {
         const vscode = acquireVsCodeApi();
 
         const searchInput = document.getElementById('searchInput');
-        const noteCards = document.querySelectorAll('.note-card');
+        const knickKnackCards = document.querySelectorAll('.knick-knack-card');
 
         searchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
-            noteCards.forEach(card => {
+            knickKnackCards.forEach(card => {
                 const cardText = card.textContent.toLowerCase();
                 if (cardText.includes(searchTerm)) {
                     card.style.display = 'block';
@@ -247,11 +247,11 @@ export function getWebviewHtml(cardsHtml: string): string {
         const titleElements = document.querySelectorAll('.clickable-title');
         titleElements.forEach(title => {
             title.addEventListener('click', (e) => {
-                const card = e.target.closest('.note-card');
+                const card = e.target.closest('.knick-knack-card');
                 const fileName = card.getAttribute('data-filename');
                 
                 vscode.postMessage({
-                    type: 'openNote',
+                    type: 'openKnickKnack',
                     fileName: fileName
                 });
             });
@@ -260,24 +260,24 @@ export function getWebviewHtml(cardsHtml: string): string {
         const deleteButtons = document.querySelectorAll('.delete-btn');
         deleteButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const card = e.target.closest('.note-card');
+                const card = e.target.closest('.knick-knack-card');
                 const fileName = card.getAttribute('data-filename');
                 
                 vscode.postMessage({
-                    type: 'deleteNote',
+                    type: 'deleteKnickKnack',
                     fileName: fileName
                 });
             });
         });
 
-        const copyNoteButtons = document.querySelectorAll('.copy-note-btn');
-        copyNoteButtons.forEach(btn => {
+        const copyKnickKnackButtons = document.querySelectorAll('.copy-knick-knack-btn');
+        copyKnickKnackButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const card = e.target.closest('.note-card');
+                const card = e.target.closest('.knick-knack-card');
                 const fileName = card.getAttribute('data-filename');
                 
                 vscode.postMessage({
-                    type: 'copyNote',
+                    type: 'copyKnickKnack',
                     fileName: fileName
                 });
             });
@@ -308,9 +308,9 @@ export function getWebviewHtml(cardsHtml: string): string {
             pre.insertBefore(copyBtn, pre.firstChild);
         });
 
-        // Hide the toggle button if the note is already short enough to fit
+        // Hide the toggle button if the knick knack is already short enough to fit
         setTimeout(() => {
-            document.querySelectorAll('.note-card').forEach(card => {
+            document.querySelectorAll('.knick-knack-card').forEach(card => {
                 const body = card.querySelector('.markdown-body');
                 const toggle = card.querySelector('.expand-toggle');
                 
@@ -324,7 +324,7 @@ export function getWebviewHtml(cardsHtml: string): string {
         const toggles = document.querySelectorAll('.expand-toggle');
         toggles.forEach(toggle => {
             toggle.addEventListener('click', (e) => {
-                const card = e.target.closest('.note-card');
+                const card = e.target.closest('.knick-knack-card');
                 
                 if (card.classList.contains('collapsed')) {
                     card.classList.remove('collapsed');

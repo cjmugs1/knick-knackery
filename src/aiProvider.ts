@@ -15,7 +15,7 @@ export class OllamaProvider implements AIProvider {
 
     async summarize(text: string): Promise<string> {
         // Pull the user's custom prompt right out of their VS Code settings
-        const config = vscode.workspace.getConfiguration('context-notes');
+        const config = vscode.workspace.getConfiguration('knick-knackery');
         const rawPrompt = config.get<string>('customPrompt') || '';
         
         // Swap in the actual terminal text where the placeholder is
@@ -65,7 +65,7 @@ export class AnthropicProvider implements AIProvider {
 
     async summarize(text: string): Promise<string> {
         // Pull the user's custom prompt right out of their VS Code settings
-        const config = vscode.workspace.getConfiguration('context-notes');
+        const config = vscode.workspace.getConfiguration('knick-knackery');
         const rawPrompt = config.get<string>('customPrompt') || '';
         
         // Swap in the actual terminal text where the placeholder is

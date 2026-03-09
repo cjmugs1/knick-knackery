@@ -8,7 +8,7 @@ export async function setApiKey(context: vscode.ExtensionContext) {
     });
 
     if (apiKey) {
-        await context.secrets.store('context_notes_api_key', apiKey);
+        await context.secrets.store('knick_knackery_api_key', apiKey);
         vscode.window.showInformationMessage('Anthropic API Key securely saved!');
     }
 };

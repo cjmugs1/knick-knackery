@@ -1,5 +1,5 @@
 {
-  "name": "context-notes",
+  "name": "knick-knackery",
   "displayName": "Knick Knackery",
   "description": "Save AI chat context as Keep-style markdown notes with local or cloud LLM summarization.",
   "version": "1.0.0",
@@ -18,31 +18,31 @@
   "contributes": {
     "commands": [
       {
-        "command": "context-notes.openBoard",
+        "command": "knick-knackery.openBoard",
         "title": "Knick Knackery: Open Board"
       },
       {
-        "command": "context-notes.saveSelection",
+        "command": "knick-knackery.saveSelection",
         "title": "Knick Knackery: Save Terminal Selection"
       },
       {
-        "command": "context-notes.saveLastCommand",
+        "command": "knick-knackery.saveLastCommand",
         "title": "Knick Knackery: Save Last Command"
       },
       {
-        "command": "context-notes.setApiKey",
+        "command": "knick-knackery.setApiKey",
         "title": "Knick Knackery: Set API Key"
       }
     ],
     "keybindings": [
       {
-        "command": "context-notes.saveSelection",
+        "command": "knick-knackery.saveSelection",
         "key": "ctrl+shift+n",
         "mac": "cmd+shift+n",
         "when": "terminalFocus"
       },
       {
-        "command": "context-notes.saveLastCommand",
+        "command": "knick-knackery.saveLastCommand",
         "key": "ctrl+shift+m",
         "mac": "cmd+shift+m",
         "when": "terminalFocus"
@@ -51,11 +51,11 @@
     "menus": {
       "terminal/context": [
         {
-          "command": "context-notes.saveSelection",
+          "command": "knick-knackery.saveSelection",
           "group": "navigation"
         },
         {
-          "command": "context-notes.saveLastCommand",
+          "command": "knick-knackery.saveLastCommand",
           "group": "navigation"
         }
       ]
@@ -64,7 +64,7 @@
       "explorer": [
         {
           "type": "webview",
-          "id": "context-notes.boardView",
+          "id": "knick-knackery.boardView",
           "name": "Knick Knackery"
         }
       ]
@@ -72,7 +72,7 @@
     "configuration": {
       "title": "Knick Knackery",
       "properties": {
-        "context-notes.aiEngine": {
+        "knick-knackery.aiEngine": {
           "type": "string",
           "enum": [
             "Local (Ollama)",
@@ -81,12 +81,12 @@
           "default": "Local (Ollama)",
           "description": "Choose which AI engine to use for summarization."
         },
-        "context-notes.ollamaModel": {
+        "knick-knackery.ollamaModel": {
           "type": "string",
           "default": "llama3.2:1b",
           "description": "The name of the local Ollama model to use (e.g., llama3.2:1b, llama3, mistral)."
         },
-        "context-notes.anthropicModel": {
+        "knick-knackery.anthropicModel": {
           "type": "string",
           "enum": [
             "claude-3-5-haiku-20241022",
@@ -96,7 +96,7 @@
           "default": "claude-3-5-haiku-20241022",
           "description": "The Anthropic model to use for cloud summarization."
         },
-        "context-notes.customPrompt": {
+        "knick-knackery.customPrompt": {
           "type": "string",
           "editPresentation": "multilineText",
           "default": "You are a strict formatting bot. You MUST summarize the provided terminal interaction EXACTLY matching the structure of the TEMPLATE below. Do NOT invent your own headings. Do NOT add pleasantries.\n\n=== TEMPLATE ===\n### [8-Word Actionable Title]\n\n**TL;DR:** [1-2 sentence summary.]\n\n---\n\n#### The Concept / Problem\n[2-3 sentences explaining the goal or issue.]\n\n#### Actionable Code / Commands\n[Code blocks or \"N/A\".]\n\n#### Key Takeaways & Caveats\n* [Bullet point 1]\n* [Bullet point 2]\n\n**Context Tags:** #tag1 #tag2 #tag3\n=== END TEMPLATE ===\n\nSummarize the following interaction EXACTLY matching the template structure.\n\n=== INTERACTION TO SUMMARIZE ===\n{TEXT}\n=== END INTERACTION ===\n\nSTRICT FORMATTED OUTPUT:\n###",

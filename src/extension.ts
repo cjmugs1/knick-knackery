@@ -1,26 +1,26 @@
 import * as vscode from 'vscode';
-import { ContextNotesProvider } from './webview';
+import { KnickKnackeryProvider } from './webview';
 import { saveTerminalContext } from './saveTerminalSelection';
 import { setApiKey } from './setApiKey';
 
 export function activate(context: vscode.ExtensionContext) {
-    const provider = new ContextNotesProvider(context.extensionUri);
+    const provider = new KnickKnackeryProvider(context.extensionUri);
     
     context.subscriptions.push(
-        vscode.window.registerWebviewViewProvider(ContextNotesProvider.viewType, provider)
+        vscode.window.registerWebviewViewProvider(KnickKnackeryProvider.viewType, provider)
     );
 
     // Register the manual selection command
-    let disposable1 = vscode.commands.registerCommand('context-notes.saveSelection', () => {
+    let disposable1 = vscode.commands.registerCommand('knick-knackery.saveSelection', () => {
         saveTerminalContext(context, provider, 'selection');
     });
 
     // Register the new "last command" command
-    let disposable2 = vscode.commands.registerCommand('context-notes.saveLastCommand', () => {
+    let disposable2 = vscode.commands.registerCommand('knick-knackery.saveLastCommand', () => {
         saveTerminalContext(context, provider, 'lastCommand');
     });
 
-    let disposable3 = vscode.commands.registerCommand('context-notes.setApiKey', () => {
+    let disposable3 = vscode.commands.registerCommand('knick-knackery.setApiKey', () => {
         setApiKey(context);
     });
 
