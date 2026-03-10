@@ -212,10 +212,10 @@ export function getWebviewHtml(cardsHtml: string): string {
     <div class="usage-guide">
         <h4>⌨️ Knick Knackery Guide</h4>
         <ul>
-            <li><strong>Save Selection:</strong> Select terminal, highlight text &amp; press <code>Ctrl+Shift+N</code></li>
-            <li><strong>Save Last Command:</strong> Select terminal, press <code>Ctrl+Shift+M</code> (No highlighting needed!)</li>
+            <li><strong>Save Text Selection:</strong> Select terminal, highlight text &amp; press <code>Ctrl+Shift+N</code></li>
+            <li><strong>Save Last Terminal Message:</strong> Select terminal, press <code>Ctrl+Shift+M</code> (No highlighting needed!)</li>
             <li><strong>Settings:</strong> Open Settings (<code>Ctrl+,</code>) and search <em>Knick Knackery</em> to change AI engines, models, or customize the prompt.</li>
-            <li><strong>Cloud Models:</strong> If using an Anthropic cloud model instead of local Ollama, press <code>Ctrl+Shift+P</code> and run <em>Knick Knackery: Set API Key</em>.</li>
+            <li><strong>Cloud Models:</strong> For Anthropic API, press <code>Ctrl+Shift+P</code> and run <em>Knick Knackery: Set API Key</em>. For Vertex AI, configure your GCP project, region, and credentials path in settings.</li>
         </ul>
     </div>
     

@@ -43,10 +43,7 @@ export class OllamaProvider implements AIProvider {
             // Give the response a type
             const data = await response.json() as { response: string };
             
-            // Since our custom prompt ends with "###" to guide the model, it usually 
-            // leaves that part out of its output. We just glue it back on here 
-            // so the markdown headers don't break!
-            return "### " + data.response.trim();
+            return data.response.trim();
             
         } catch (error) {
             console.error('Ollama Connection Error:', error);
@@ -98,8 +95,7 @@ export class AnthropicProvider implements AIProvider {
             // Anthropic's response object is shaped differently than Ollama's
             const data = await response.json() as { content: Array<{text: string}> };
             
-            // Just like with Ollama, we glue the markdown header back on
-            return "### " + data.content[0].text.trim();
+            return data.content[0].text.trim();
             
         } catch (error) {
             console.error('Anthropic Connection Error:', error);
@@ -171,7 +167,7 @@ export class VertexAnthropicProvider implements AIProvider {
 
             const data = await response.json() as { content: Array<{text: string}> };
             
-            return "### " + data.content[0].text.trim();
+            return data.content[0].text.trim();
             
         } catch (error) {
             console.error('Vertex Anthropic Connection Error:', error);
@@ -239,7 +235,7 @@ export class VertexGoogleProvider implements AIProvider {
                 candidates: Array<{ content: { parts: Array<{ text: string }> } }>
             };
 
-            return "### " + data.candidates[0].content.parts[0].text.trim();
+            return data.candidates[0].content.parts[0].text.trim();
 
         } catch (error) {
             console.error('Vertex Google Connection Error:', error);
