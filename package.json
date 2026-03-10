@@ -4,7 +4,10 @@
   "description": "Save AI chat context as Keep-style markdown notes with local or cloud LLM summarization.",
   "version": "1.0.0",
   "publisher": "connor-mulligan",
-  "repository": {"type": "git", "url": "https://github.com/cjmugs1/knick-knackery"},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cjmugs1/knick-knackery"
+  },
   "license": "MIT",
   "icon": "knick-knackery.jpg",
   "engines": {
@@ -65,7 +68,8 @@
         {
           "type": "webview",
           "id": "knick-knackery.boardView",
-          "name": "Knick Knackery"
+          "name": "Knick Knackery",
+          "icon": "$(notebook)"
         }
       ]
     },
@@ -76,7 +80,8 @@
           "type": "string",
           "enum": [
             "Local (Ollama)",
-            "Cloud (API Key)"
+            "Cloud (Anthropic API)",
+            "Cloud (Vertex AI)"
           ],
           "default": "Local (Ollama)",
           "description": "Choose which AI engine to use for summarization."
@@ -89,12 +94,30 @@
         "knick-knackery.anthropicModel": {
           "type": "string",
           "enum": [
-            "claude-3-5-haiku-20241022",
+            "claude-sonnet-4-6",
+            "claude-opus-4-6",
+            "claude-haiku-4-5-20251001",
+            "claude-sonnet-4-5-20250929",
             "claude-3-7-sonnet-20250219",
-            "claude-3-5-sonnet-20241022"
+            "claude-3-5-haiku-20241022"
           ],
-          "default": "claude-3-5-haiku-20241022",
+          "default": "claude-sonnet-4-6",
           "description": "The Anthropic model to use for cloud summarization."
+        },
+        "knick-knackery.vertexProjectId": {
+          "type": "string",
+          "default": "<gcp-project-name>",
+          "description": "(If using Vertex) The Google Cloud Project ID for Vertex AI."
+        },
+        "knick-knackery.vertexRegion": {
+          "type": "string",
+          "default": "<gcp-region>",
+          "description": "(If using Vertex) The GCP region where the Claude model is hosted."
+        },
+        "knick-knackery.vertexAdcPath": {
+          "type": "string",
+          "default": "~/.config/gcloud/<custom-adc.json>",
+          "description": "(If using Vertex) Absolute path to your Google Cloud Application Default Credentials JSON file."
         },
         "knick-knackery.customPrompt": {
           "type": "string",
@@ -122,6 +145,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "google-auth-library": "^10.6.1",
     "marked": "^17.0.3"
   }
 }

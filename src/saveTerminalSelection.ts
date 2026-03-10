@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as os from 'os'; // Needed to grab the user's home directory
 import * as path from 'path'; // Safely builds cross-platform file paths
-import { AIProvider, OllamaProvider, AnthropicProvider } from './aiProvider';
+import { AIProvider, OllamaProvider, AnthropicProvider, VertexAnthropicProvider } from './aiProvider';
 import { KnickKnackeryProvider } from './webview';
 
 // The 'mode' parameter lets us toggle between grabbing highlighted text vs. the last terminal output
@@ -42,7 +42,22 @@ export async function saveTerminalContext(context: vscode.ExtensionContext, prov
             if (engine === 'Local (Ollama)') {
                 aiProvider = new OllamaProvider(ollamaModel);
                 activeModelName = ollamaModel;
-            } else {
+            }
+            else if (engine === 'Cloud (Vertex AI)') {
+                // Pull Vertex specific configurations (no defaults applied)
+            const projectId = config.get<string>('vertexProjectId');
+            const region = config.get<string>('vertexRegion');
+            const adcPath = config.get<string>('vertexAdcPath');
+            
+            // Enforce that all three required settings are provided
+            if (!projectId || !region || !adcPath) {
+                throw new Error("Incomplete Vertex AI configuration. Please ensure Project ID, Region, and ADC Path are all set in your VS Code settings.");
+            }
+
+                aiProvider = new VertexAnthropicProvider(projectId, region, anthropicModel, adcPath);
+                activeModelName = `Vertex (${anthropicModel})`;
+            }
+            else {
                 const apiKey = await context.secrets.get('knick_knackery_api_key');
                 if (!apiKey) {
                     throw new Error("API Key not found. Please run the 'Knick Knackery: Set API Key' command first.");

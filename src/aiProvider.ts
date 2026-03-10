@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import { GoogleAuth } from 'google-auth-library';
+import * as os from 'os';
 
 export interface AIProvider {
     summarize(text: string): Promise<string>;
@@ -102,6 +104,76 @@ export class AnthropicProvider implements AIProvider {
         } catch (error) {
             console.error('Anthropic Connection Error:', error);
             throw new Error(`Failed to connect to cloud Anthropic model: ${error}`);
+        }
+    }
+};
+
+export class VertexAnthropicProvider implements AIProvider {
+    private projectId: string;
+    private region: string;
+    private model: string;
+    private adcPath: string;
+
+    constructor(projectId: string, region: string, model: string, adcPath: string) {
+        this.projectId = projectId;
+        this.region = region;
+        this.model = model;
+        
+        // Resolve the tilde to the absolute home directory if necessary
+        this.adcPath = adcPath.replace(/^~(?=$|\/|\\)/, os.homedir());
+    }
+
+    async summarize(text: string): Promise<string> {
+        // 1. Inject the ADC path into the extension's isolated Node environment
+        process.env.GOOGLE_APPLICATION_CREDENTIALS = this.adcPath;
+
+        const config = vscode.workspace.getConfiguration('knick-knackery');
+        const rawPrompt = config.get<string>('customPrompt') || '';
+        const finalPrompt = rawPrompt.replace('{TEXT}', text);
+
+        try {
+            // 2. Dynamically fetch an OAuth 2.0 access token using the ADC file
+            const auth = new GoogleAuth({
+                scopes: ['https://www.googleapis.com/auth/cloud-platform']
+            });
+            const client = await auth.getClient();
+            const tokenResponse = await client.getAccessToken();
+            const accessToken = tokenResponse.token;
+
+            if (!accessToken) {
+                throw new Error("Failed to retrieve access token from Google Auth Library.");
+            }
+
+            // 3. Construct the Vertex AI rawPredict endpoint
+            const apiUrl = `https://${this.region}-aiplatform.googleapis.com/v1/projects/${this.projectId}/locations/${this.region}/publishers/anthropic/models/${this.model}:rawPredict`;
+
+            // 4. Send the request (Vertex accepts standard Anthropic payload formatting here)
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    anthropic_version: "vertex-2023-10-16",
+                    max_tokens: 1024,
+                    messages: [{ role: 'user', content: finalPrompt }],
+                    stream: false 
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Vertex API error: ${response.status} - ${errorText}`);
+            }
+
+            const data = await response.json() as { content: Array<{text: string}> };
+            
+            return "### " + data.content[0].text.trim();
+            
+        } catch (error) {
+            console.error('Vertex Anthropic Connection Error:', error);
+            throw new Error(`Failed to connect to Vertex AI: ${error}`);
         }
     }
 };
