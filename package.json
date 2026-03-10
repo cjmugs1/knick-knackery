@@ -21,10 +21,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "knick-knackery.openBoard",
-        "title": "Knick Knackery: Open Board"
-      },
-      {
         "command": "knick-knackery.saveSelection",
         "title": "Knick Knackery: Save Terminal Selection"
       },
@@ -96,27 +92,39 @@
           "enum": [
             "claude-sonnet-4-6",
             "claude-opus-4-6",
-            "claude-haiku-4-5-20251001",
-            "claude-sonnet-4-5-20250929",
-            "claude-3-7-sonnet-20250219",
-            "claude-3-5-haiku-20241022"
+            "claude-haiku-4-5",
+            "claude-sonnet-4-5"
           ],
           "default": "claude-sonnet-4-6",
           "description": "The Anthropic model to use for cloud summarization."
         },
+        "knick-knackery.vertexModel": {
+          "type": "string",
+          "enum": [
+            "claude-sonnet-4-6",
+            "claude-opus-4-6",
+            "claude-haiku-4-5",
+            "claude-sonnet-4-5",
+            "gemini-2.5-flash",
+            "gemini-2.5-pro",
+            "gemini-2.0-flash"
+          ],
+          "default": "claude-sonnet-4-6",
+          "description": "(If using Vertex) The model to use via Vertex AI. Supports both Anthropic Claude and Google Gemini models."
+        },
         "knick-knackery.vertexProjectId": {
           "type": "string",
-          "default": "<gcp-project-name>",
+          "default": "",
           "description": "(If using Vertex) The Google Cloud Project ID for Vertex AI."
         },
         "knick-knackery.vertexRegion": {
           "type": "string",
-          "default": "<gcp-region>",
-          "description": "(If using Vertex) The GCP region where the Claude model is hosted."
+          "default": "",
+          "description": "(If using Vertex) The GCP region where the model is hosted."
         },
         "knick-knackery.vertexAdcPath": {
           "type": "string",
-          "default": "~/.config/gcloud/<custom-adc.json>",
+          "default": "",
           "description": "(If using Vertex) Absolute path to your Google Cloud Application Default Credentials JSON file."
         },
         "knick-knackery.customPrompt": {

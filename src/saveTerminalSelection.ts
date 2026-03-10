@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
-import * as os from 'os'; // Needed to grab the user's home directory
-import * as path from 'path'; // Safely builds cross-platform file paths
-import { AIProvider, OllamaProvider, AnthropicProvider, VertexAnthropicProvider } from './aiProvider';
+import { AIProvider, OllamaProvider, AnthropicProvider, VertexAnthropicProvider, VertexGoogleProvider } from './aiProvider';
 import { KnickKnackeryProvider } from './webview';
+import { KNICK_KNACKS_DIR } from './paths';
 
 // The 'mode' parameter lets us toggle between grabbing highlighted text vs. the last terminal output
 export async function saveTerminalContext(context: vscode.ExtensionContext, provider: KnickKnackeryProvider, mode: 'selection' | 'lastCommand') {
@@ -39,25 +38,7 @@ export async function saveTerminalContext(context: vscode.ExtensionContext, prov
             let aiProvider: AIProvider;
             let activeModelName = ''; 
 
-            if (engine === 'Local (Ollama)') {
-                aiProvider = new OllamaProvider(ollamaModel);
-                activeModelName = ollamaModel;
-            }
-            else if (engine === 'Cloud (Vertex AI)') {
-                // Pull Vertex specific configurations (no defaults applied)
-            const projectId = config.get<string>('vertexProjectId');
-            const region = config.get<string>('vertexRegion');
-            const adcPath = config.get<string>('vertexAdcPath');
-            
-            // Enforce that all three required settings are provided
-            if (!projectId || !region || !adcPath) {
-                throw new Error("Incomplete Vertex AI configuration. Please ensure Project ID, Region, and ADC Path are all set in your VS Code settings.");
-            }
-
-                aiProvider = new VertexAnthropicProvider(projectId, region, anthropicModel, adcPath);
-                activeModelName = `Vertex (${anthropicModel})`;
-            }
-            else {
+            if (engine === 'Cloud (Anthropic API)') {
                 const apiKey = await context.secrets.get('knick_knackery_api_key');
                 if (!apiKey) {
                     throw new Error("API Key not found. Please run the 'Knick Knackery: Set API Key' command first.");
@@ -65,14 +46,34 @@ export async function saveTerminalContext(context: vscode.ExtensionContext, prov
                 aiProvider = new AnthropicProvider(apiKey, anthropicModel);
                 activeModelName = anthropicModel;
             }
+            else if (engine === 'Cloud (Vertex AI)') {
+                const projectId = config.get<string>('vertexProjectId');
+                const region = config.get<string>('vertexRegion');
+                const adcPath = config.get<string>('vertexAdcPath');
+                const vertexModel = config.get<string>('vertexModel') || 'claude-sonnet-4-6';
+
+                if (!projectId || !region || !adcPath) {
+                    throw new Error("Incomplete Vertex AI configuration. Please ensure Project ID, Region, and ADC Path are all set in your VS Code settings.");
+                }
+
+                // Route to the correct provider based on whether the model is Gemini or Claude
+                if (vertexModel.startsWith('gemini-')) {
+                    aiProvider = new VertexGoogleProvider(projectId, region, vertexModel, adcPath);
+                } else {
+                    aiProvider = new VertexAnthropicProvider(projectId, region, vertexModel, adcPath);
+                }
+                activeModelName = `Vertex (${vertexModel})`;
+            }
+            else {
+                aiProvider = new OllamaProvider(ollamaModel);
+                activeModelName = ollamaModel;
+            }
 
             progress.report({ message: `Asking ${activeModelName}...` });
             const summarizedText = await aiProvider.summarize(text);
 
             // Ensure the global knick knacks directory exists; create it if it doesn't
-            const homeDir = os.homedir();
-            const globalKnickKnacksDir = path.join(homeDir, '.knick_knacks');
-            const globalKnickKnacksUri = vscode.Uri.file(globalKnickKnacksDir);
+            const globalKnickKnacksUri = vscode.Uri.file(KNICK_KNACKS_DIR);
 
             try {
                 await vscode.workspace.fs.stat(globalKnickKnacksUri);

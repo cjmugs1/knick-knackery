@@ -1,8 +1,12 @@
 import * as vscode from 'vscode';
-import * as os from 'os';
 import * as path from 'path';
 import { marked } from 'marked';
 import { getWebviewHtml } from './webviewTemplate';
+import { KNICK_KNACKS_DIR } from './paths';
+
+function escapeHtml(str: string): string {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 
 export class KnickKnackeryProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'knick-knackery.boardView';
@@ -13,7 +17,7 @@ export class KnickKnackeryProvider implements vscode.WebviewViewProvider {
 
     public resolveWebviewView(
         webviewView: vscode.WebviewView,
-        context: vscode.WebviewViewResolveContext,
+        _context: vscode.WebviewViewResolveContext,
         _token: vscode.CancellationToken,
     ) {
         this._view = webviewView;
@@ -59,8 +63,7 @@ export class KnickKnackeryProvider implements vscode.WebviewViewProvider {
 
         if (userChoice !== 'Delete') return; 
 
-        const homeDir = os.homedir();
-        const fileUri = vscode.Uri.file(path.join(homeDir, '.knick_knacks', fileName));
+        const fileUri = vscode.Uri.file(path.join(KNICK_KNACKS_DIR, fileName));
 
         try {
             await vscode.workspace.fs.delete(fileUri, { useTrash: false });
@@ -72,8 +75,7 @@ export class KnickKnackeryProvider implements vscode.WebviewViewProvider {
     }
 
     private async copyKnickKnack(fileName: string) {
-        const homeDir = os.homedir();
-        const fileUri = vscode.Uri.file(path.join(homeDir, '.knick_knacks', fileName));
+        const fileUri = vscode.Uri.file(path.join(KNICK_KNACKS_DIR, fileName));
 
         try {
             const fileData = await vscode.workspace.fs.readFile(fileUri);
@@ -87,8 +89,7 @@ export class KnickKnackeryProvider implements vscode.WebviewViewProvider {
     }
 
     private async openKnickKnack(fileName: string) {
-        const homeDir = os.homedir();
-        const fileUri = vscode.Uri.file(path.join(homeDir, '.knick_knacks', fileName));
+        const fileUri = vscode.Uri.file(path.join(KNICK_KNACKS_DIR, fileName));
 
         try {
             const document = await vscode.workspace.openTextDocument(fileUri);
@@ -100,9 +101,7 @@ export class KnickKnackeryProvider implements vscode.WebviewViewProvider {
     }
 
     private async getWebviewContent() {
-        const homeDir = os.homedir();
-        const globalKnickKnacksDir = path.join(homeDir, '.knick_knacks');
-        const globalKnickKnacksUri = vscode.Uri.file(globalKnickKnacksDir);
+        const globalKnickKnacksUri = vscode.Uri.file(KNICK_KNACKS_DIR);
         let cardsHtml = '';
 
         try {
@@ -152,10 +151,10 @@ export class KnickKnackeryProvider implements vscode.WebviewViewProvider {
                     const renderedHtmlContent = await marked.parse(cleanMarkdown);
 
                     cardsHtml += `
-                        <div class="knick-knack-card collapsed" data-filename="${fileName}">
+                        <div class="knick-knack-card collapsed" data-filename="${escapeHtml(fileName)}">
                             <div class="card-header">
                                 <div class="title-container">
-                                    <span class="tags clickable-title" title="Click to edit raw markdown">${displayTitle}</span>
+                                    <span class="tags clickable-title" title="Click to edit raw markdown">${escapeHtml(displayTitle)}</span>
                                 </div>
                                 <div class="action-buttons">
                                     <button class="icon-btn copy-knick-knack-btn" title="Copy Full Knick Knack to Clipboard">📋</button>

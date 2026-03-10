@@ -106,7 +106,7 @@ export class AnthropicProvider implements AIProvider {
             throw new Error(`Failed to connect to cloud Anthropic model: ${error}`);
         }
     }
-};
+}
 
 export class VertexAnthropicProvider implements AIProvider {
     private projectId: string;
@@ -114,28 +114,30 @@ export class VertexAnthropicProvider implements AIProvider {
     private model: string;
     private adcPath: string;
 
+    private auth: GoogleAuth;
+
     constructor(projectId: string, region: string, model: string, adcPath: string) {
         this.projectId = projectId;
         this.region = region;
         this.model = model;
-        
+
         // Resolve the tilde to the absolute home directory if necessary
         this.adcPath = adcPath.replace(/^~(?=$|\/|\\)/, os.homedir());
+
+        this.auth = new GoogleAuth({
+            keyFilename: this.adcPath,
+            scopes: ['https://www.googleapis.com/auth/cloud-platform']
+        });
     }
 
     async summarize(text: string): Promise<string> {
-        // 1. Inject the ADC path into the extension's isolated Node environment
-        process.env.GOOGLE_APPLICATION_CREDENTIALS = this.adcPath;
-
         const config = vscode.workspace.getConfiguration('knick-knackery');
         const rawPrompt = config.get<string>('customPrompt') || '';
         const finalPrompt = rawPrompt.replace('{TEXT}', text);
 
         try {
-            // 2. Dynamically fetch an OAuth 2.0 access token using the ADC file
-            const auth = new GoogleAuth({
-                scopes: ['https://www.googleapis.com/auth/cloud-platform']
-            });
+            // Dynamically fetch an OAuth 2.0 access token using the ADC file
+            const auth = this.auth;
             const client = await auth.getClient();
             const tokenResponse = await client.getAccessToken();
             const accessToken = tokenResponse.token;
@@ -144,10 +146,10 @@ export class VertexAnthropicProvider implements AIProvider {
                 throw new Error("Failed to retrieve access token from Google Auth Library.");
             }
 
-            // 3. Construct the Vertex AI rawPredict endpoint
+            // Construct the Vertex AI rawPredict endpoint
             const apiUrl = `https://${this.region}-aiplatform.googleapis.com/v1/projects/${this.projectId}/locations/${this.region}/publishers/anthropic/models/${this.model}:rawPredict`;
 
-            // 4. Send the request (Vertex accepts standard Anthropic payload formatting here)
+            // Send the request (Vertex accepts standard Anthropic payload formatting here)
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 
@@ -176,4 +178,72 @@ export class VertexAnthropicProvider implements AIProvider {
             throw new Error(`Failed to connect to Vertex AI: ${error}`);
         }
     }
-};
+}
+
+export class VertexGoogleProvider implements AIProvider {
+    private projectId: string;
+    private region: string;
+    private model: string;
+    private adcPath: string;
+
+    private auth: GoogleAuth;
+
+    constructor(projectId: string, region: string, model: string, adcPath: string) {
+        this.projectId = projectId;
+        this.region = region;
+        this.model = model;
+
+        this.adcPath = adcPath.replace(/^~(?=$|\/|\\)/, os.homedir());
+
+        this.auth = new GoogleAuth({
+            keyFilename: this.adcPath,
+            scopes: ['https://www.googleapis.com/auth/cloud-platform']
+        });
+    }
+
+    async summarize(text: string): Promise<string> {
+        const config = vscode.workspace.getConfiguration('knick-knackery');
+        const rawPrompt = config.get<string>('customPrompt') || '';
+        const finalPrompt = rawPrompt.replace('{TEXT}', text);
+
+        try {
+            const client = await this.auth.getClient();
+            const tokenResponse = await client.getAccessToken();
+            const accessToken = tokenResponse.token;
+
+            if (!accessToken) {
+                throw new Error("Failed to retrieve access token from Google Auth Library.");
+            }
+
+            // Gemini uses the generateContent endpoint on Vertex AI
+            const apiUrl = `https://${this.region}-aiplatform.googleapis.com/v1/projects/${this.projectId}/locations/${this.region}/publishers/google/models/${this.model}:generateContent`;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    contents: [{ role: 'user', parts: [{ text: finalPrompt }] }],
+                    generationConfig: { maxOutputTokens: 1024 }
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Vertex API error: ${response.status} - ${errorText}`);
+            }
+
+            const data = await response.json() as {
+                candidates: Array<{ content: { parts: Array<{ text: string }> } }>
+            };
+
+            return "### " + data.candidates[0].content.parts[0].text.trim();
+
+        } catch (error) {
+            console.error('Vertex Google Connection Error:', error);
+            throw new Error(`Failed to connect to Vertex AI: ${error}`);
+        }
+    }
+}
