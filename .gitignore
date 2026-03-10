@@ -9,7 +9,7 @@ dist/
 .vscode-test/
 
 # Packaged extension files
-*.vsix
+# *.vsix
 
 # Environment variables (just in case you ever use a .env file locally)
 .env
