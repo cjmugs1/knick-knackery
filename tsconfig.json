@@ -5,6 +5,7 @@
     "skipLibCheck": true,
     "outDir": "out",
     "lib": ["ES2022"],
+    "esModuleInterop": true,
     "sourceMap": true,
     "rootDir": "src",
     "strict": true
