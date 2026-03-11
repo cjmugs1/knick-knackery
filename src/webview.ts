@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { marked } from 'marked';
+import sanitizeHtml from 'sanitize-html';
 import { getWebviewHtml } from './webviewTemplate';
 import { KNICK_KNACKS_DIR } from './paths';
 
@@ -103,6 +104,7 @@ export class KnickKnackeryProvider implements vscode.WebviewViewProvider {
     private async getWebviewContent() {
         const globalKnickKnacksUri = vscode.Uri.file(KNICK_KNACKS_DIR);
         let cardsHtml = '';
+        let knickKnackCount = 0;
 
         try {
             const entries = await vscode.workspace.fs.readDirectory(globalKnickKnacksUri);
@@ -110,6 +112,7 @@ export class KnickKnackeryProvider implements vscode.WebviewViewProvider {
 
             // Keep the newest knick knacks pinned to the top
             mdFiles.sort((a, b) => b[0].localeCompare(a[0]));
+            knickKnackCount = mdFiles.length;
 
             if (mdFiles.length === 0) {
                 cardsHtml = '<p>No knick knacks found yet. Highlight terminal text and press Ctrl+Shift+N!</p>';
@@ -148,7 +151,16 @@ export class KnickKnackeryProvider implements vscode.WebviewViewProvider {
                     cleanMarkdown = cleanMarkdown.replace(/#[a-zA-Z0-9_-]+[ \t]*/g, '');
                     cleanMarkdown = cleanMarkdown.trim();
 
-                    const renderedHtmlContent = await marked.parse(cleanMarkdown);
+                    const rawHtml = await marked.parse(cleanMarkdown);
+                    const renderedHtmlContent = sanitizeHtml(rawHtml, {
+                        allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+                        allowedAttributes: {
+                            ...sanitizeHtml.defaults.allowedAttributes,
+                            'code': ['class'],
+                            'span': ['class'],
+                            'pre': ['class'],
+                        },
+                    });
 
                     cardsHtml += `
                         <div class="knick-knack-card collapsed" data-filename="${escapeHtml(fileName)}">
@@ -173,6 +185,6 @@ export class KnickKnackeryProvider implements vscode.WebviewViewProvider {
             cardsHtml = '<p>The global ~/.knick_knacks directory does not exist yet. Save a terminal selection first!</p>';
         }
         
-        return getWebviewHtml(cardsHtml);
+        return getWebviewHtml(cardsHtml, knickKnackCount);
     }
 }

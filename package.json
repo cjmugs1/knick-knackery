@@ -29,6 +29,10 @@
         "title": "Knick Knackery: Save Last Command"
       },
       {
+        "command": "knick-knackery.saveEditorSelection",
+        "title": "Knick Knackery: Save Editor Selection"
+      },
+      {
         "command": "knick-knackery.setApiKey",
         "title": "Knick Knackery: Set API Key"
       }
@@ -45,6 +49,12 @@
         "key": "ctrl+shift+m",
         "mac": "cmd+shift+m",
         "when": "terminalFocus"
+      },
+      {
+        "command": "knick-knackery.saveEditorSelection",
+        "key": "ctrl+shift+n",
+        "mac": "cmd+shift+n",
+        "when": "editorTextFocus && editorHasSelection"
       }
     ],
     "menus": {
@@ -156,6 +166,7 @@
   "devDependencies": {
     "@types/marked": "^5.0.2",
     "@types/node": "18.x",
+    "@types/sanitize-html": "^2.13.0",
     "@types/vscode": "^1.85.0",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
@@ -165,6 +176,7 @@
   },
   "dependencies": {
     "google-auth-library": "^10.6.1",
-    "marked": "^17.0.3"
+    "marked": "^17.0.3",
+    "sanitize-html": "^2.14.0"
   }
 }

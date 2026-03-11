@@ -4,7 +4,7 @@ Knick Knackery is a lightweight VS Code extension that captures and summarizes y
 
 ## Features
 
-* **Instant Summaries:** Highlight text in your terminal and generate an AI summary with a keyboard shortcut.
+* **Instant Summaries:** Highlight text in your terminal or editor and generate an AI summary with a keyboard shortcut.
 * **Auto-Capture:** Automatically grab the output of your last terminal command — no highlighting required.
 * **Local or Cloud AI:** Keep your data completely private using local Ollama models, or connect to Anthropic's Claude API or Google Cloud Vertex AI for cloud-powered summaries.
 * **Global Knowledge Base:** All notes are saved to `~/.knick_knacks`, so your insights are available across all your VS Code workspaces.
@@ -17,10 +17,11 @@ All commands are available from the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift
 | Command | Shortcut (Win/Linux) | Shortcut (Mac) | Description |
 |---|---|---|---|
 | **Knick Knackery: Save Terminal Selection** | `Ctrl+Shift+N` | `Cmd+Shift+N` | Summarize the currently highlighted text in the terminal. |
+| **Knick Knackery: Save Editor Selection** | `Ctrl+Shift+N` | `Cmd+Shift+N` | Summarize the currently highlighted text in the editor. |
 | **Knick Knackery: Save Last Command** | `Ctrl+Shift+M` | `Cmd+Shift+M` | Automatically capture and summarize the output of the last terminal command. |
 | **Knick Knackery: Set API Key** | — | — | Store your Anthropic API key securely (required for the Cloud Anthropic engine). |
 
-> **Note:** The keyboard shortcuts only activate when the terminal is focused.
+> **Note:** `Ctrl+Shift+N` / `Cmd+Shift+N` works in both the terminal and editor — VS Code automatically routes to the correct command based on which panel has focus.
 
 ## Requirements
 

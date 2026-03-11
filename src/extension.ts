@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { KnickKnackeryProvider } from './webview';
-import { saveTerminalContext } from './saveTerminalSelection';
+import { saveTerminalContext, saveEditorSelection } from './saveTerminalSelection';
 import { setApiKey } from './setApiKey';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -24,7 +24,11 @@ export function activate(context: vscode.ExtensionContext) {
         setApiKey(context);
     });
 
-    context.subscriptions.push(disposable1, disposable2, disposable3);
+    let disposable4 = vscode.commands.registerCommand('knick-knackery.saveEditorSelection', () => {
+        saveEditorSelection(context, provider);
+    });
+
+    context.subscriptions.push(disposable1, disposable2, disposable3, disposable4);
 }
 
 export function deactivate() {};
