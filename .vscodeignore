@@ -2,6 +2,7 @@
 .vscode-test/**
 src/**
 node_modules/**
+os-installers/**
 .gitignore
 tsconfig.json
 **/*.map
