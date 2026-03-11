@@ -1,7 +1,7 @@
 {
   "name": "knick-knackery",
   "displayName": "Knick Knackery",
-  "description": "Save AI chat context as Keep-style markdown notes with local or cloud LLM summarization.",
+  "description": "Save AI chat context or any other text as Keep-style markdown notes with local or cloud LLM summarization.",
   "version": "1.0.0",
   "publisher": "connor-mulligan",
   "repository": {
@@ -40,8 +40,8 @@
     "keybindings": [
       {
         "command": "knick-knackery.saveSelection",
-        "key": "ctrl+shift+n",
-        "mac": "cmd+shift+n",
+        "key": "ctrl+alt+k",
+        "mac": "cmd+alt+k",
         "when": "terminalFocus"
       },
       {
@@ -52,8 +52,8 @@
       },
       {
         "command": "knick-knackery.saveEditorSelection",
-        "key": "ctrl+shift+n",
-        "mac": "cmd+shift+n",
+        "key": "ctrl+alt+k",
+        "mac": "cmd+alt+k",
         "when": "editorTextFocus && editorHasSelection"
       }
     ],
