@@ -212,8 +212,8 @@ export function getWebviewHtml(cardsHtml: string, knickKnackCount: number = 0): 
     <div class="usage-guide">
         <h4>⌨️ Knick Knackery Guide</h4>
         <ul>
-            <li><strong>Save Text Selection:</strong> Highlight text in the terminal or editor &amp; press <code>Ctrl+Shift+N</code></li>
-            <li><strong>Save Last Terminal Message:</strong> Select terminal, press <code>Ctrl+Shift+M</code> (No highlighting needed!)</li>
+            <li><strong>Save Text Selection:</strong> Highlight text in the terminal or editor &amp; press <code>Ctrl+Alt+K</code> (<code>Cmd+Alt+K</code> on Mac)</li>
+            <li><strong>Save Last Terminal Message:</strong> Select terminal, press <code>Ctrl+Alt+Shift+K</code> (<code>Cmd+Alt+Shift+K</code> on Mac) (No highlighting needed!)</li>
             <li><strong>Settings:</strong> Open Settings (<code>Ctrl+,</code>) and search <em>Knick Knackery</em> to change AI engines, models, or customize the prompt.</li>
             <li><strong>Cloud Models:</strong> For Anthropic API, press <code>Ctrl+Shift+P</code> and run <em>Knick Knackery: Set API Key</em>. For Vertex AI, configure your GCP project, region, and credentials path in settings.</li>
         </ul>

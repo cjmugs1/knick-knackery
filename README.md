@@ -16,12 +16,12 @@ All commands are available from the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift
 
 | Command | Shortcut (Win/Linux) | Shortcut (Mac) | Description |
 |---|---|---|---|
-| **Knick Knackery: Save Terminal Selection** | `Ctrl+Shift+N` | `Cmd+Shift+N` | Summarize the currently highlighted text in the terminal. |
-| **Knick Knackery: Save Editor Selection** | `Ctrl+Shift+N` | `Cmd+Shift+N` | Summarize the currently highlighted text in the editor. |
-| **Knick Knackery: Save Last Command** | `Ctrl+Shift+M` | `Cmd+Shift+M` | Automatically capture and summarize the output of the last terminal command. |
+| **Knick Knackery: Save Terminal Selection** | `Ctrl+Alt+K` | `Cmd+Alt+K` | Summarize the currently highlighted text in the terminal. |
+| **Knick Knackery: Save Editor Selection** | `Ctrl+Alt+K` | `Cmd+Alt+K` | Summarize the currently highlighted text in the editor. |
+| **Knick Knackery: Save Last Command** | `Ctrl+Alt+Shift+K` | `Cmd+Alt+Shift+K` | Automatically capture and summarize the output of the last terminal command. |
 | **Knick Knackery: Set API Key** | — | — | Store your Anthropic API key securely (required for the Cloud Anthropic engine). |
 
-> **Note:** `Ctrl+Shift+N` / `Cmd+Shift+N` works in both the terminal and editor — VS Code automatically routes to the correct command based on which panel has focus.
+> **Note:** `Ctrl+Alt+K` / `Cmd+Alt+K` works in both the terminal and editor — VS Code automatically routes to the correct command based on which panel has focus.
 
 ## Requirements
 

@@ -42,12 +42,12 @@
         "command": "knick-knackery.saveSelection",
         "key": "ctrl+alt+k",
         "mac": "cmd+alt+k",
-        "when": "terminalFocus"
+        "when": "terminalFocus && terminalTextSelected"
       },
       {
         "command": "knick-knackery.saveLastCommand",
-        "key": "ctrl+shift+m",
-        "mac": "cmd+shift+m",
+        "key": "ctrl+alt+shift+k",
+        "mac": "cmd+alt+shift+k",
         "when": "terminalFocus"
       },
       {
